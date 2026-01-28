@@ -123,6 +123,8 @@ const Login = () => {
       const contentType = res.headers.get("content-type");
       if (contentType && contentType.indexOf("application/json") !== -1) {
         const result = await res.json();
+        console.log(result);
+
         const errorMessage = result.message || "Authentication Failed";
         if (!res.ok) {
           if (result.message.toLowerCase().includes("password")) {
@@ -134,12 +136,19 @@ const Login = () => {
         }
 
         //token 
-        localStorage.setItem("accessToken", result.accessToken);
-        localStorage.setItem("refreshToken", result.refreshToken);
+        const token = result.data?.token;
+        if (token) {
+          localStorage.setItem("accessToken", token);
+          localStorage.setItem("Username", result.data?.name);
 
-        //navigate
-        console.log(`${currentPage} Success:`, result);
-        navigate('/dashboard');
+          //navigate
+          console.log(`${currentPage} Success:`, result);
+          navigate('/dashboard');
+        } else {
+          console.log("Token not found");
+
+        }
+
       } else {
         // html response handling
         const text = await res.text();

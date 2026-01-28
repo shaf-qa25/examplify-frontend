@@ -5,7 +5,7 @@ import Dashboard from "./components/Dashboard";
 import Pages from "./components/Pages";
 
 const ProtectedRoute = ({ children }) => {
-  const token = localStorage.getItem("token");
+  const token = localStorage.getItem("accessToken");
   if (!token) {
     return <Navigate to="/login" replace />;
   }
