@@ -1,28 +1,58 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
-import { Route, Routes } from 'react-router'
-import Home from './components/Home'
-import Login from './components/Login'
-import Signup from './components/Signup'
-import Dashboard from './components/Dashboard'
-import Pages from './components/Pages'
+import { Navigate, Routes, Route } from "react-router";
+import Home from "./components/Home";
+import Login from "./components/Login";
+import Dashboard from "./components/Dashboard";
+import Pages from "./components/Pages";
+
+const ProtectedRoute = ({ children }) => {
+  const token = localStorage.getItem("token");
+  if (!token) {
+    return <Navigate to="/login" replace />;
+  }
+  return children;
+};
+
+const PublicRoute = ({ children }) => {
+  const token = localStorage.getItem("token");
+  if (token) {
+    return <Navigate to="/dashboard" replace />;
+  }
+  return children;
+};
 
 function App() {
-  const [count, setCount] = useState(0)
-
   return (
     <>
-<Routes>
-  <Route path="/" element={<Home/> } />
-  <Route path="/login" element={<Login/> } />
-  <Route path="/signup" element={<Signup/> } />
-  <Route path="/dashboard" element={<Dashboard/> } />
-  <Route path="/pages" element={<Pages/> } />
-</Routes>
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/login" element={
+          <PublicRoute>
+            <Login />
+          </PublicRoute>
+        } />
+
+        <Route path="/signup" element={
+          <PublicRoute>
+            <Login />
+          </PublicRoute>
+        } />
+
+        <Route path="/dashboard" element={
+          <ProtectedRoute>
+            <Dashboard />
+          </ProtectedRoute>
+        } />
+
+        <Route path="/pages" element={
+          <ProtectedRoute>
+            <Pages />
+          </ProtectedRoute>
+        } />
+
+        <Route path="*" element={<Navigate to="/" />} />
+      </Routes>
     </>
   )
 }
 
-export default App
+export default App;
