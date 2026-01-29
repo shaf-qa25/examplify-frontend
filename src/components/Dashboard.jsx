@@ -14,8 +14,6 @@ import { BookAIcon, Bookmark, BookOpenText, ChartNoAxesCombined, LayoutPanelLeft
 
 
 
-// ... baki imports same hain
-
 const Dashboard = () => {
   const [activeSection, setActiveSection] = useState("Dashboard");
   const navigate = useNavigate();
@@ -67,14 +65,13 @@ const Dashboard = () => {
           {sections.map((section) => (
             <li key={section.name}>
               <Button
-                variant="ghost" // 'default' se hover effect better aayega
+                variant="ghost"
                 className={`w-full justify-start font-bold rounded-2xl mb-2 h-12 transition-all ${activeSection === section.name
-                    ? "bg-gradient-to-r from-[#2293F8] to-[#0A4A9D] text-white shadow-lg"
-                    : "text-gray-500 hover:bg-blue-50 hover:text-[#0A4A9D]"
+                  ? "bg-gradient-to-r from-[#2293F8] to-[#0A4A9D] text-white shadow-lg"
+                  : "text-gray-500 hover:bg-blue-50 hover:text-[#0A4A9D]"
                   }`}
                 onClick={() => setActiveSection(section.name)}
               >
-                {/* Icon rendering logic change ki hai yahan */}
                 <span className={`${activeSection === section.name ? "text-white" : "text-gray-500"}`}>
                   {section.icon}
                 </span>
@@ -84,7 +81,7 @@ const Dashboard = () => {
           ))}
         </ul>
 
-        {/* Logout button niche push ho jaye isliye mt-auto */}
+        {/* Logout button*/}
         <div className="mt-auto pt-4 border-t border-gray-200">
           <Button
             onClick={handleLogout}

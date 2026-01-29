@@ -133,7 +133,7 @@ const Pages = () => {
     <div className="min-h-screen bg-gray-50 flex justify-center py-6 px-4">
       <div className="w-full max-w-6xl flex gap-8">
 
-        {/* FILTER PANEL - Width thodi kam ki hai aur compact banaya hai */}
+        {/* FILTER PANEL*/}
         <div className="w-1/4 sticky top-6 h-fit max-h-[90vh] overflow-y-auto bg-white p-5 rounded-2xl shadow-sm border border-gray-100">
           <div className="bg-[#0330C2] text-white text-lg font-semibold px-4 py-2 rounded-full mb-5 shadow-md flex items-center justify-center gap-2">
             <img
@@ -145,7 +145,7 @@ const Pages = () => {
           </div>
 
           <div className="space-y-5">
-            {/* Year & Exam - Compact grid */}
+            {/* Year & Exam */}
             <div className="grid grid-cols-1 gap-4">
               <div className="border-b pb-3">
                 <h2 className="text-sm font-bold text-gray-700 mb-2 uppercase tracking-wider">Year</h2>
@@ -182,7 +182,7 @@ const Pages = () => {
               </div>
             </div>
 
-            {/* Dropdowns - Chote aur clean selectors */}
+            {/* Dropdowns*/}
             <div className="space-y-3">
               {[
                 { label: "Branch", key: "branch", options: ["CSE", "CS", "IT", "ECE", "ME"] },
@@ -203,7 +203,7 @@ const Pages = () => {
               ))}
             </div>
 
-            {/* Buttons - Ek line mein compact set kiya */}
+            {/* Buttons*/}
             <div className="flex flex-col gap-2 pt-4">
               <button
                 className="w-full bg-[#0330C2] text-white py-2.5 rounded-xl text-sm font-medium hover:bg-blue-800 shadow-sm transition-all active:scale-95"
@@ -221,7 +221,7 @@ const Pages = () => {
           </div>
         </div>
 
-        {/* RESULTS PANEL - Cards ko chota aur clean banaya hai */}
+        {/* RESULTS PANEL */}
         <div className="w-3/4">
           <h2 className="text-xl font-bold text-gray-800 mb-4">Results ({filteredPyqs.length})</h2>
           <div className="grid grid-cols-1 gap-3">

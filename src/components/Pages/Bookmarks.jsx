@@ -1,20 +1,17 @@
 import React, { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion'; // AnimatePresence se delete smooth hoga
+import { motion, AnimatePresence } from 'framer-motion';
 
 const Bookmarks = () => {
-  // Initial state directly localStorage se check kar lo
   const [bookmarks, setBookmarks] = useState(() => {
     const saved = localStorage.getItem('my bookmarks');
     return saved ? JSON.parse(saved) : [];
   });
 
-  // Sync: Jab bhi bookmarks array change ho, storage apne aap update ho jaye
   useEffect(() => {
     localStorage.setItem('my bookmarks', JSON.stringify(bookmarks));
   }, [bookmarks]);
 
   const removeBookmark = (id) => {
-    // Ab storage ki chinta nahi, sirf state filter karo
     setBookmarks(prev => prev.filter(item => item._id !== id));
   };
 
@@ -29,14 +26,14 @@ const Bookmarks = () => {
 
       {bookmarks.length > 0 ? (
         <div className="grid grid-cols-1 gap-4">
-          <AnimatePresence> {/* Isse items exit hote waqt bhi animate honge */}
+          <AnimatePresence>
             {bookmarks.map((item, index) => (
               <motion.div
-                layout // Smooth transition for remaining items
+                layout // Smooth transition
                 initial={{ opacity: 0, x: -20 }}
                 animate={{ opacity: 1, x: 0 }}
                 exit={{ opacity: 0, scale: 0.95 }}
-                key={item._id} // ID hamesha consistent rakho (_id)
+                key={item._id}
                 className="h-[15vh] w-full bg-[#E1EDFF] shadow-sm rounded-xl flex items-center p-6 gap-7 border border-blue-100"
               >
                 <div
