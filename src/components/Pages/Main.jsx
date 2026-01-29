@@ -5,21 +5,31 @@ function Main({ setActiveSection }) {
   const [pyqs, setPyqs] = useState([]);
   const colors = ["#D72000", "#1646B5", "#1E7C09", "#890695", "#00A703", "#002783"];
 
+
+  const username = localStorage.getItem("Username") || "Guest User";
+
   useEffect(() => {
-    fetch('https://backend-examplify.vercel.app/v1/api/pdf/getpdf')
+    const testUrl = `https://examplify-backend-2026.vercel.app/v1/api/pdf/getpdf?branch=CSE&year=3&semester=5th&type=PUT`;
+
+    console.log("Testing with URL:", testUrl);
+
+    fetch(testUrl)
       .then(res => res.json())
       .then(data => {
-        const result = Array.isArray(data) ? data : data.data || [];
-        const sorted = result.sort((a, b) => new Date(b.uploadDate) - new Date(a.uploadDate));
-        setPyqs(sorted.slice(0, 3)); // show only latest 3
+        console.log("Raw Response from Backend:", data);
+        if (data.success && data.data && data.data.length > 0) {
+          setPyqs(data.data.slice(0, 3));
+        } else {
+          console.log("Response toh aaya par data khaali hai. Status check kar Sanyam se.");
+        }
       })
-      .catch(err => console.error('Failed to fetch PYQs:', err));
+      .catch(err => console.error("Network Error:", err));
   }, []);
   return (
     <div>
       <div className="w-full border h-[20vh] flex justify-between bg-gradient-to-r from-[#2293F8] to-[#0A4A9D] rounded-2xl">
         <div className="flex flex-col justify-center gap-3 items-center ml-10">
-          <h1 className="text-white font-bold text-4xl">Welcome back, Pranay</h1>
+          <h1 className="text-white font-bold text-4xl">Welcome back, {username}</h1>
           <h5 className="text-white">You've completed 70% of your weekly tasks. Keep it up!</h5>
         </div>
         <img src="https://res.cloudinary.com/dll6vk0kp/image/upload/v1744278454/image_77_kt35j6.png"></img>

@@ -1,20 +1,27 @@
 import React, { useEffect, useState } from "react";
+import { dummyPyqs } from "@/api/Pyqdummy";
+import { Bookmark, Download } from "lucide-react";
 
 const Pages = () => {
-  const [pyqs, setPyqs] = useState([]);
-  const [filteredPyqs, setFilteredPyqs] = useState([]);
+  const [pyqs, setPyqs] = useState(dummyPyqs);
+  const [filteredPyqs, setFilteredPyqs] = useState(dummyPyqs);
+  const [bookmarked, setBookmarks] = useState([]);
 
-  useEffect(() => {
-    fetch("https://backend-examplify.vercel.app/v1/api/pdf/getpdf")
-      .then((res) => res.json())
-      .then((data) => {
-        const result = Array.isArray(data) ? data : data.data || [];
-        const sorted = result.sort((a, b) => new Date(b.uploadDate) - new Date(a.uploadDate));
-        setPyqs(sorted);
-        setFilteredPyqs(sorted);
-      })
-      .catch((err) => console.error("Failed to fetch PYQs:", err));
-  }, []);
+  // useEffect(() => {
+  //   fetch(dummyPyqs)
+  //     .then((res) => {
+  //       console.log("response aa rha h ");
+  //       res.json()
+  //     })
+  //     .then((data) => {
+  //       console.log("data aa rha h ");
+  //       const result = Array.isArray(data) ? data : data.data || [];
+  //       const sorted = result.sort((a, b) => new Date(b.uploadDate) - new Date(a.uploadDate));
+  //       setPyqs(sorted);
+  //       setFilteredPyqs(sorted);
+  //     })
+  //     .catch((err) => console.error("Failed to fetch PYQs:", err));
+  // }, []);
 
   const colors = [
     "#FFB6B9",
@@ -36,17 +43,28 @@ const Pages = () => {
     session: ""
   });
 
+  // const handleCheckboxChange = (type, value) => {
+  //   setFilters((prev) => {
+  //     const list = prev[type];
+  //     return {
+  //       ...prev,
+  //       [type]: list.includes(value)
+  //         ? list.filter((i) => i !== value)
+  //         : [...list, value]
+  //     };
+  //   });
+  // };
+
+
+
   const handleCheckboxChange = (type, value) => {
     setFilters((prev) => {
-      const list = prev[type];
+      const list = prev[type];    //dynamic allocation
       return {
-        ...prev,
-        [type]: list.includes(value)
-          ? list.filter((i) => i !== value)
-          : [...list, value]
-      };
-    });
-  };
+        ...prev, [type]: list.includes(value) ? list.filter((i) => i !== value) : [...list, value]
+      }
+    })
+  }
 
   const handleSelectChange = (key, value) => {
     setFilters((prev) => ({ ...prev, [key]: value }));
@@ -83,197 +101,173 @@ const Pages = () => {
     setFilteredPyqs(filtered);
   };
 
+  const handleClearFilter = () => {
+    setFilters({
+      years: [],
+      exams: [],
+      branch: "",
+      subject: "",
+      semester: "",
+      session: ""
+    })
+    setFilteredPyqs(pyqs)
+  }
+
+
+  const handleBookmark = (id) => {
+    setBookmarks((prev) =>
+      prev.includes(id) ? prev.filter((i) => i !== id) : [...prev, id]
+    )
+  }
   return (
-    <div className="min-h-screen flex justify-center items-start py-10">
-      <div className="w-full max-w-6xl flex gap-12">
-        {/* FILTER PANEL */}
-        <div className="w-1/3 sticky top-10 h-[90vh] overflow-y-auto">
-          <div className="bg-[#0330C2] text-white text-xl font-semibold px-6 py-3 rounded-full mb-6 shadow flex items-center space-x-3 justify-center">
+    <div className="min-h-screen bg-gray-50 flex justify-center py-6 px-4">
+      <div className="w-full max-w-6xl flex gap-8">
+
+        {/* FILTER PANEL - Width thodi kam ki hai aur compact banaya hai */}
+        <div className="w-1/4 sticky top-6 h-fit max-h-[90vh] overflow-y-auto bg-white p-5 rounded-2xl shadow-sm border border-gray-100">
+          <div className="bg-[#0330C2] text-white text-lg font-semibold px-4 py-2 rounded-full mb-5 shadow-md flex items-center justify-center gap-2">
             <img
               src="https://ucarecdn.com/f4a13fdf-910b-44fb-b5f4-6a80f4ccc5cf/-/preview/57x60/"
               alt="Logo"
-              className="w-8 h-8 object-contain"
+              className="w-6 h-6 object-contain"
             />
             <span>Filters</span>
           </div>
 
-          <div className="grid grid-cols-2 gap-4">
-            {/* Year */}
-            <div className="bg-white rounded-xl shadow p-4">
-              <h2 className="text-md font-semibold mb-3">Year</h2>
-              <div className="space-y-2">
-                {["1st year", "2nd year", "3rd year", "4th year"].map((year, index) => (
-                  <label key={index} className="flex items-center space-x-2">
-                    <input
-                      type="checkbox"
-                      className="year"
-                      checked={filters.years.includes(year)}
-                      onChange={() => handleCheckboxChange("years", year)}
-                    />
-                    <span className="text-sm">{year}</span>
-                  </label>
-                ))}
+          <div className="space-y-5">
+            {/* Year & Exam - Compact grid */}
+            <div className="grid grid-cols-1 gap-4">
+              <div className="border-b pb-3">
+                <h2 className="text-sm font-bold text-gray-700 mb-2 uppercase tracking-wider">Year</h2>
+                <div className="grid grid-cols-2 gap-2">
+                  {["1st year", "2nd year", "3rd year", "4th year"].map((year, index) => (
+                    <label key={index} className="flex items-center space-x-2 cursor-pointer hover:bg-gray-50 p-1 rounded">
+                      <input
+                        type="checkbox"
+                        className="rounded text-[#0330C2]"
+                        checked={filters.years.includes(year)}
+                        onChange={() => handleCheckboxChange("years", year)}
+                      />
+                      <span className="text-xs text-gray-600">{year}</span>
+                    </label>
+                  ))}
+                </div>
+              </div>
+
+              <div className="border-b pb-3">
+                <h2 className="text-sm font-bold text-gray-700 mb-2 uppercase tracking-wider">Exam</h2>
+                <div className="flex flex-wrap gap-3">
+                  {["ST", "PUT", "UT"].map((exam, index) => (
+                    <label key={index} className="flex items-center space-x-2 cursor-pointer">
+                      <input
+                        type="checkbox"
+                        className="rounded text-[#0330C2]"
+                        checked={filters.exams.includes(exam)}
+                        onChange={() => handleCheckboxChange("exams", exam)}
+                      />
+                      <span className="text-xs text-gray-600 font-medium">{exam}</span>
+                    </label>
+                  ))}
+                </div>
               </div>
             </div>
 
-            {/* Exam */}
-            <div className="bg-white rounded-xl shadow p-4">
-              <h2 className="text-md font-semibold mb-3">Exam</h2>
-              <div className="space-y-2">
-                {["ST", "PUT", "UT"].map((exam, index) => (
-                  <label key={index} className="flex items-center space-x-2">
-                    <input
-                      type="checkbox"
-                      className="exam"
-                      checked={filters.exams.includes(exam)}
-                      onChange={() => handleCheckboxChange("exams", exam)}
-                    />
-                    <span className="text-sm">{exam}</span>
-                  </label>
-                ))}
-              </div>
+            {/* Dropdowns - Chote aur clean selectors */}
+            <div className="space-y-3">
+              {[
+                { label: "Branch", key: "branch", options: ["CSE", "CS", "IT", "ECE", "ME"] },
+                { label: "Subject", key: "subject", options: ["DSA", "Maths", "Networks", "COA"] },
+                { label: "Semester", key: "semester", options: ["1st", "3rd", "5th", "7th"] }
+              ].map((group) => (
+                <div key={group.key}>
+                  <label className="text-xs font-bold text-gray-500 mb-1 block uppercase">{group.label}</label>
+                  <select
+                    className="w-full px-3 py-2 bg-gray-50 border border-gray-200 text-sm rounded-lg outline-none focus:ring-2 focus:ring-blue-500"
+                    value={filters[group.key]}
+                    onChange={(e) => handleSelectChange(group.key, e.target.value)}
+                  >
+                    <option value="">All {group.label}s</option>
+                    {group.options.map(opt => <option key={opt} value={opt}>{opt}</option>)}
+                  </select>
+                </div>
+              ))}
             </div>
-          </div>
 
-          {/* Branch & Subject */}
-          <div className="grid grid-cols-2 gap-4 mt-6">
-            <div className="rounded-xl p-4">
-              <h2 className="text-md font-semibold mb-3">Branch</h2>
-              <select
-                className="w-full px-2 py-1 border border-gray-600 text-gray-600 rounded-full"
-                value={filters.branch}
-                onChange={(e) => handleSelectChange("branch", e.target.value)}
+            {/* Buttons - Ek line mein compact set kiya */}
+            <div className="flex flex-col gap-2 pt-4">
+              <button
+                className="w-full bg-[#0330C2] text-white py-2.5 rounded-xl text-sm font-medium hover:bg-blue-800 shadow-sm transition-all active:scale-95"
+                onClick={applyFilters}
               >
-                <option value="">Select</option>
-                {[
-                  "CSE",
-                  "CS",
-                  "CS-IT",
-                  "CSE-DS",
-                  "CSE-HINDI",
-                  "IT",
-                  "CSE-AIML",
-                  "AIML",
-                  "ECE",
-                  "ME",
-                  "EN",
-                  "CIVIL"
-                ].map((branch) => (
-                  <option key={branch} value={branch}>
-                    {branch}
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            <div className="rounded-xl p-4">
-              <h2 className="text-md font-semibold mb-3">Subject</h2>
-              <select
-                className="w-full px-2 py-1 border border-gray-600 text-gray-600 rounded-full"
-                value={filters.subject}
-                onChange={(e) => handleSelectChange("subject", e.target.value)}
+                Apply Filters
+              </button>
+              <button
+                className="w-full text-red-500 text-xs font-semibold hover:underline"
+                onClick={handleClearFilter}
               >
-                <option value="">Select</option>
-                {["DSA", "Maths", "Networks", "Electronics", "COA"].map((subject) => (
-                  <option key={subject} value={subject}>
-                    {subject}
-                  </option>
-                ))}
-              </select>
+                Clear All Filters
+              </button>
             </div>
-          </div>
-
-          {/* Semester & Session */}
-          <div className="grid grid-cols-2 gap-4 mt-6">
-            <div className="rounded-xl p-4">
-              <h2 className="text-md font-semibold mb-3">Semester</h2>
-              <select
-                className="w-full px-2 py-1 border border-gray-600 text-gray-600 rounded-full"
-                value={filters.semester}
-                onChange={(e) => handleSelectChange("semester", e.target.value)}
-              >
-                <option value="">Select</option>
-                {["1st", "2nd", "3rd", "4th", "5th", "6th", "7th", "8th"].map((sem) => (
-                  <option key={sem} value={sem}>
-                    {sem}
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            <div className="rounded-xl p-4">
-              <h2 className="text-md font-semibold mb-3">Session</h2>
-              <select
-                className="w-full px-2 py-1 border border-gray-600 text-gray-600 rounded-full"
-                value={filters.session}
-                onChange={(e) => handleSelectChange("session", e.target.value)}
-              >
-                <option value="">Select</option>
-                {["2021-22", "2022-23", "2023-24", "2024-25"].map((session) => (
-                  <option key={session} value={session}>
-                    {session}
-                  </option>
-                ))}
-              </select>
-            </div>
-          </div>
-
-          {/* Apply Button */}
-          <div className="mt-8 flex justify-center">
-            <button
-              className="bg-[#0330C2] text-white px-6 py-3 rounded-full shadow hover:bg-blue-800 transition"
-              onClick={applyFilters}
-            >
-              Apply Filters
-            </button>
           </div>
         </div>
 
-        {/* RESULTS PANEL */}
-        <div className="w-2/3 h-[90vh] overflow-y-auto pr-2">
-          <div className="mt-8 space-y-4">
+        {/* RESULTS PANEL - Cards ko chota aur clean banaya hai */}
+        <div className="w-3/4">
+          <h2 className="text-xl font-bold text-gray-800 mb-4">Results ({filteredPyqs.length})</h2>
+          <div className="grid grid-cols-1 gap-3">
             {filteredPyqs.length > 0 ? (
-              filteredPyqs.map((pyq, index) => (
-                <div
-                  key={pyq._id || index}
-                  className="h-[15vh] w-full bg-[#E1EDFF] shadow rounded-xl"
-                >
-                  <div className="p-6 flex gap-7 items-center">
-                    <div
-                      className="h-[10vh] w-[6vw] rounded-2xl flex items-center justify-center"
-                      style={{ backgroundColor: colors[index % colors.length] }}
-                    >
-                      <img
-                        src="https://res.cloudinary.com/dll6vk0kp/image/upload/v1744287676/file_u3nppe.png"
-                        className="h-[8vh]"
-                        alt="file"
-                      />
+              filteredPyqs.map((pyq, index) => {
+                const isBookmarked = bookmarked.includes(pyq._id);
+                return (
+                  <div
+                    key={pyq._id || index}
+                    className="bg-white border border-gray-100 shadow-sm rounded-xl p-4 flex items-center justify-between hover:shadow-md transition-shadow group"
+                  >
+                    <div className="flex items-center gap-4">
+                      <div
+                        className="h-12 w-12 rounded-xl flex items-center justify-center shrink-0 shadow-inner"
+                        style={{ backgroundColor: colors[index % colors.length] }}
+                      >
+                        <img
+                          src="https://res.cloudinary.com/dll6vk0kp/image/upload/v1744287676/file_u3nppe.png"
+                          className="h-7 w-7 object-contain"
+                          alt="file"
+                        />
+                      </div>
+                      <div>
+                        <h1 className="text-lg font-bold text-gray-800 leading-tight">{pyq.Subject}</h1>
+                        <p className="text-xs text-gray-500 font-medium">
+                          {pyq.type} • Semester {pyq.semester} • {pyq.session}
+                        </p>
+                      </div>
                     </div>
-                    <div className="flex flex-col gap-1">
-                      <h1 className="text-2xl font-md">{pyq.Subject}</h1>
-                      <h6 className="text-md text-[#555]">
-                        {pyq.type} • {pyq.year} Year
-                      </h6>
+
+                    <div className="flex items-center gap-3">
+                      <button
+                        onClick={() => handleBookmark(pyq._id)}
+                        className="p-2 rounded-full hover:bg-gray-100 transition-colors"
+                      >
+                        <Bookmark
+                          size={20}
+                          fill={isBookmarked ? "#0330C2" : "none"}
+                          color={isBookmarked ? "#0330C2" : "#94a3b8"}
+                        />
+                      </button>
+                      <a
+                        href={pyq.publicUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="p-2 bg-blue-50 text-[#0330C2] rounded-full hover:bg-[#0330C2] hover:text-white transition-all shadow-sm"
+                      >
+                        <Download size={18} />
+                      </a>
                     </div>
-                    <a
-                      href={pyq.publicUrl}
-                      download
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="ml-auto"
-                    >
-                      <img
-                        src="https://res.cloudinary.com/dll6vk0kp/image/upload/v1744287926/downlaod_deanpg.png"
-                        className="h-[30px]"
-                        alt="Download"
-                      />
-                    </a>
                   </div>
-                </div>
-              ))
+                );
+              })
             ) : (
-              <div className="text-center text-gray-500">
-                No PYQs found for selected filters.
+              <div className="text-center py-20 bg-white rounded-3xl border-2 border-dashed border-gray-100">
+                <p className="text-gray-400">No resources match your filters.</p>
               </div>
             )}
           </div>
