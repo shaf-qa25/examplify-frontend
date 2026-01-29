@@ -114,11 +114,21 @@ const Pages = () => {
   }
 
 
-  const handleBookmark = (id) => {
-    setBookmarks((prev) =>
-      prev.includes(id) ? prev.filter((i) => i !== id) : [...prev, id]
-    )
+  const handleBookmark = (pyq) => {
+
+    setBookmarks((prev) => {
+      const isAlreadyBookmarked = prev.find((item) => item._id === pyq._id)
+      if (isAlreadyBookmarked) {
+        return prev.filter((i) => i._id !== pyq._id);
+      }
+      return [...prev, pyq];
+    })
   }
+
+
+  useEffect(() => {
+    localStorage.setItem("my bookmarks", JSON.stringify(bookmarked))
+  }, [bookmarked])
   return (
     <div className="min-h-screen bg-gray-50 flex justify-center py-6 px-4">
       <div className="w-full max-w-6xl flex gap-8">
@@ -217,7 +227,7 @@ const Pages = () => {
           <div className="grid grid-cols-1 gap-3">
             {filteredPyqs.length > 0 ? (
               filteredPyqs.map((pyq, index) => {
-                const isBookmarked = bookmarked.includes(pyq._id);
+                // const isBookmarked = bookmarked.includes(pyq._id);
                 return (
                   <div
                     key={pyq._id || index}
@@ -244,13 +254,13 @@ const Pages = () => {
 
                     <div className="flex items-center gap-3">
                       <button
-                        onClick={() => handleBookmark(pyq._id)}
+                        onClick={() => handleBookmark(pyq)}
                         className="p-2 rounded-full hover:bg-gray-100 transition-colors"
                       >
                         <Bookmark
                           size={20}
-                          fill={isBookmarked ? "#0330C2" : "none"}
-                          color={isBookmarked ? "#0330C2" : "#94a3b8"}
+                          fill={bookmarked.some(b => b._id === pyq._id) ? "#0330C2" : "none"}
+                          color={bookmarked.some(b => b._id === pyq._id) ? "#0330C2" : "#94a3b8"}
                         />
                       </button>
                       <a
